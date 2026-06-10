@@ -9,7 +9,7 @@ const menu = document.getElementById("navmenu");
 function openMenu() {
   if (!menu || !toggle) return;
 
-  menu.classList.add("open");
+  menu.classList.add("is-open");
   document.body.classList.add("menu-open");
   toggle.setAttribute("aria-expanded", "true");
   toggle.setAttribute("aria-label", "Menü schließen");
@@ -18,7 +18,7 @@ function openMenu() {
 function closeMenu() {
   if (!menu || !toggle) return;
 
-  menu.classList.remove("open");
+  menu.classList.remove("is-open");
   document.body.classList.remove("menu-open");
   toggle.setAttribute("aria-expanded", "false");
   toggle.setAttribute("aria-label", "Menü öffnen");
@@ -26,30 +26,49 @@ function closeMenu() {
 
 if (toggle && menu) {
   toggle.addEventListener("click", () => {
-    menu.classList.contains("open") ? closeMenu() : openMenu();
+    menu.classList.contains("is-open") ? closeMenu() : openMenu();
   });
 
   menu.addEventListener("click", (event) => {
-    if (event.target.closest("a")) closeMenu();
+    if (event.target.closest("a")) {
+      closeMenu();
+    }
+  });
+
+  document.addEventListener("click", (event) => {
+    const clickedInsideNav = event.target.closest(".nav__inner");
+
+    if (!clickedInsideNav) {
+      closeMenu();
+    }
   });
 
   window.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") closeMenu();
+    if (event.key === "Escape") {
+      closeMenu();
+    }
   });
 }
+
+/* =========================
+   Smooth Scroll
+========================= */
 
 document.querySelectorAll('a[href^="#"]').forEach((link) => {
   link.addEventListener("click", (event) => {
     const href = link.getAttribute("href");
+
     if (!href || href === "#") return;
 
     const target = document.querySelector(href);
+
     if (!target) return;
 
     event.preventDefault();
     closeMenu();
 
-    const top = target.getBoundingClientRect().top + window.scrollY - 86;
+    const offset = header ? header.offsetHeight + 16 : 86;
+    const top = target.getBoundingClientRect().top + window.scrollY - offset;
 
     window.scrollTo({
       top,
@@ -57,6 +76,10 @@ document.querySelectorAll('a[href^="#"]').forEach((link) => {
     });
   });
 });
+
+/* =========================
+   Header Scroll Shadow
+========================= */
 
 window.addEventListener(
   "scroll",
@@ -67,6 +90,10 @@ window.addEventListener(
   },
   { passive: true }
 );
+
+/* =========================
+   Footer Jahr
+========================= */
 
 const yearEl = document.getElementById("year");
 
@@ -109,6 +136,7 @@ if (yearEl) {
 
     try {
       const formData = new FormData(form);
+
       formData.append("_subject", "Neue Anfrage über Stefanie Weiss Website");
       formData.append("_template", "table");
       formData.append("_captcha", "false");
@@ -129,7 +157,10 @@ if (yearEl) {
       form.reset();
     } catch (error) {
       console.error(error);
-      showStatus("Leider konnte die Nachricht nicht gesendet werden. Bitte versuche es später erneut.", false);
+      showStatus(
+        "Leider konnte die Nachricht nicht gesendet werden. Bitte versuche es später erneut.",
+        false
+      );
     } finally {
       if (submitBtn) {
         submitBtn.disabled = false;
@@ -151,6 +182,15 @@ if (yearEl) {
   const declineBtn = document.getElementById("cookie-decline");
 
   if (!banner || !acceptBtn || !declineBtn) return;
+
+  function hideBanner() {
+    banner.style.opacity = "0";
+    banner.style.transform = "translateX(-50%) translateY(16px)";
+
+    setTimeout(() => {
+      banner.hidden = true;
+    }, 260);
+  }
 
   function setConsent(type) {
     const data = {
@@ -191,15 +231,6 @@ if (yearEl) {
       banner.style.opacity = "1";
       banner.style.transform = "translateX(-50%) translateY(0)";
     });
-  }
-
-  function hideBanner() {
-    banner.style.opacity = "0";
-    banner.style.transform = "translateX(-50%) translateY(16px)";
-
-    setTimeout(() => {
-      banner.hidden = true;
-    }, 260);
   }
 
   banner.style.transition = "opacity .28s ease, transform .28s ease";
