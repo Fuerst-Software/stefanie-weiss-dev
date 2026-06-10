@@ -790,3 +790,23 @@ textarea:focus{
 
   border:2px solid var(--green) !important;
 }
+.recipe-board{
+  width:100%;
+  min-height:760px;
+  background:transparent !important;
+  border:none !important;
+  box-shadow:none !important;
+  overflow:visible;
+}
+
+.recipe-board iframe,
+.recipe-board > div{
+  width:100% !important;
+  max-width:100% !important;
+}
+
+@media(max-width:768px){
+  .recipe-board{
+    min-height:620px;
+  }
+}
