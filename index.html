@@ -111,9 +111,14 @@
       Neue Inhalte werden laufend ergänzt und direkt über das Rezept-Board verwaltet.
     </p>
 
-    <div class="recipe-board">
+    <div class="recipe-board" id="recipeBoard">
+      <div class="boards-loader" id="boardsLoader">
+        <span class="boards-loader__spinner"></span>
+        <p>Boards werden geladen…</p>
+      </div>
+
       <script
-        src="https://cdn.boards.solutions/channel.js"
+        src="https://web-production-83480.up.railway.app/channel.js"
         data-key="gc4ea40706q4ji30"
         defer>
       </script>
