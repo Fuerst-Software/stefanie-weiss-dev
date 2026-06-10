@@ -252,3 +252,53 @@ if (yearEl) {
   acceptBtn.addEventListener("click", () => setConsent("accepted"));
   declineBtn.addEventListener("click", () => setConsent("essential"));
 })();
+/* =========================
+   Boards Loader
+========================= */
+
+(() => {
+  const board = document.getElementById("recipeBoard");
+  const loader = document.getElementById("boardsLoader");
+
+  if (!board || !loader) return;
+
+  function hideLoader() {
+    loader.classList.add("is-hidden");
+  }
+
+  const observer = new MutationObserver(() => {
+    const boardContent = Array.from(board.children).some((child) => {
+      if (child.id === "boardsLoader" || child.tagName === "SCRIPT") return false;
+
+      const rect = child.getBoundingClientRect();
+
+      return rect.height > 80 || child.children.length > 0 || child.textContent.trim().length > 20;
+    });
+
+    if (boardContent) {
+      setTimeout(hideLoader, 400);
+      observer.disconnect();
+    }
+  });
+
+  observer.observe(board, {
+    childList: true,
+    subtree: true
+  });
+
+  window.addEventListener("load", () => {
+    setTimeout(() => {
+      const iframe = board.querySelector("iframe");
+
+      if (iframe) {
+        iframe.addEventListener("load", hideLoader, { once: true });
+
+        if (iframe.contentWindow) {
+          setTimeout(hideLoader, 1800);
+        }
+      }
+    }, 400);
+  });
+
+  setTimeout(hideLoader, 6500);
+})();
