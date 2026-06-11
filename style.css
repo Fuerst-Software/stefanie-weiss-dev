@@ -868,3 +868,21 @@ textarea:focus{
     min-height:620px;
   }
 }
+
+/* Mobile sauber vollbreit, aber mit Abstand */
+@media (max-width: 768px) {
+  .boards-section {
+    margin-top: 36px;
+  }
+
+  .boards-container {
+    max-width: 100%;
+  }
+
+  .boards-container iframe,
+  .boards-container > div,
+  .boards-container article,
+  .boards-container section {
+    max-width: 100% !important;
+  }
+}
