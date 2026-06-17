@@ -886,3 +886,10 @@ textarea:focus{
     max-width: 100% !important;
   }
 }
+.footer,
+.footer__inner,
+.footer nav,
+.footer nav a{
+  position:relative;
+  z-index:99999 !important;
+}
