@@ -42,7 +42,7 @@
     const c = getConsent();
     const need = !c || (c && c.v !== CONSENT_VERSION);
     if (need) {
-      banner.removeAttribute('hidden');
+      banner.style.display = 'flex';
       const acceptBtn = $('#cookie-accept', banner);
       acceptBtn && acceptBtn.focus({ preventScroll: true });
     } else {
@@ -55,14 +55,14 @@
 
   acceptBtn?.addEventListener('click', () => {
     setConsent({ analytics: true, marketing: true });
-    banner.setAttribute('hidden', '');
+    banner.style.display = 'none';
     // Beispiel: Analytics erst NACH Einwilligung laden:
     // loadAnalytics();
   });
 
   declineBtn?.addEventListener('click', () => {
     setConsent({ analytics: false, marketing: false });
-    banner.setAttribute('hidden', '');
+    banner.style.display = 'none';
   });
 
   // Optional: Lazy-Laden von Scripts nach Einwilligung
@@ -74,5 +74,9 @@
   //   document.head.appendChild(s);
   // }
 
-  document.addEventListener('DOMContentLoaded', showIfNeeded);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', showIfNeeded);
+  } else {
+    showIfNeeded();
+  }
 })();
