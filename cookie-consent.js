@@ -42,7 +42,7 @@
     const c = getConsent();
     const need = !c || (c && c.v !== CONSENT_VERSION);
     if (need) {
-      banner.style.display = 'block';
+      banner.removeAttribute('hidden');
       const acceptBtn = $('#cookie-accept', banner);
       acceptBtn && acceptBtn.focus({ preventScroll: true });
     } else {
@@ -55,14 +55,14 @@
 
   acceptBtn?.addEventListener('click', () => {
     setConsent({ analytics: true, marketing: true });
-    banner.style.display = 'none';
+    banner.setAttribute('hidden', '');
     // Beispiel: Analytics erst NACH Einwilligung laden:
     // loadAnalytics();
   });
 
   declineBtn?.addEventListener('click', () => {
     setConsent({ analytics: false, marketing: false });
-    banner.style.display = 'none';
+    banner.setAttribute('hidden', '');
   });
 
   // Optional: Lazy-Laden von Scripts nach Einwilligung
