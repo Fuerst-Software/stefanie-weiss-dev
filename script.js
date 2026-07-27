@@ -175,7 +175,7 @@ if (yearEl) {
 ========================= */
 
 (() => {
-  const COOKIE_KEY = "stefanie_cookie_settings_v1";
+  const KEY = "stefanie_cookie_v2";
 
   const banner = document.getElementById("cookie-banner");
   const acceptBtn = document.getElementById("cookie-accept");
@@ -183,74 +183,38 @@ if (yearEl) {
 
   if (!banner || !acceptBtn || !declineBtn) return;
 
-  function hideBanner() {
-    banner.style.opacity = "0";
-    banner.style.transform = "translateX(-50%) translateY(16px)";
-
-    setTimeout(() => {
-      banner.hidden = true;
-    }, 260);
-  }
-
-  function setConsent(type) {
-    const data = {
-      type,
-      date: new Date().toISOString()
-    };
-
-    localStorage.setItem(COOKIE_KEY, JSON.stringify(data));
-
-    document.cookie =
-      "cookie_consent=" +
-      type +
-      "; path=/; max-age=" +
-      60 * 60 * 24 * 365 +
-      "; SameSite=Lax";
-
-    hideBanner();
-
-    window.dispatchEvent(
-      new CustomEvent("cookieconsentchange", {
-        detail: { consent: type }
-      })
-    );
-  }
-
   function getConsent() {
-    try {
-      return JSON.parse(localStorage.getItem(COOKIE_KEY));
-    } catch {
-      return null;
-    }
+    try { return JSON.parse(localStorage.getItem(KEY)); }
+    catch { return null; }
+  }
+
+  function saveConsent(type) {
+    localStorage.setItem(KEY, JSON.stringify({ type, date: new Date().toISOString() }));
   }
 
   function showBanner() {
-    banner.hidden = false;
-
+    banner.classList.add("is-visible");
     requestAnimationFrame(() => {
-      banner.style.opacity = "1";
-      banner.style.transform = "translateX(-50%) translateY(0)";
+      requestAnimationFrame(() => {
+        banner.style.opacity = "1";
+        banner.style.transform = "translateX(-50%) translateY(0)";
+      });
     });
   }
 
-  banner.style.transition = "opacity .28s ease, transform .28s ease";
-  banner.style.opacity = "0";
-  banner.style.transform = "translateX(-50%) translateY(16px)";
-
-  const savedConsent = getConsent();
-
-  if (!savedConsent) {
-    setTimeout(showBanner, 700);
-  } else if (savedConsent.type === "accepted") {
-    window.dispatchEvent(
-      new CustomEvent("cookieconsentchange", {
-        detail: { consent: "accepted" }
-      })
-    );
+  function hideBanner() {
+    banner.style.opacity = "0";
+    banner.style.transform = "translateX(-50%) translateY(16px)";
+    setTimeout(() => banner.classList.remove("is-visible"), 300);
   }
 
-  acceptBtn.addEventListener("click", () => setConsent("accepted"));
-  declineBtn.addEventListener("click", () => setConsent("essential"));
+  const saved = getConsent();
+  if (!saved) {
+    setTimeout(showBanner, 700);
+  }
+
+  acceptBtn.addEventListener("click", () => { saveConsent("accepted"); hideBanner(); });
+  declineBtn.addEventListener("click", () => { saveConsent("essential"); hideBanner(); });
 })();
 /* =========================
    Boards Loader
