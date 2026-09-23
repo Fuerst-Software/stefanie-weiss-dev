@@ -208,12 +208,27 @@ if (yearEl) {
     setTimeout(() => banner.classList.remove("is-visible"), 300);
   }
 
+  // Werbung (Adsovo) erst nach Zustimmung laden
+  function enableAds() {
+    if (window.bsAdsConsent) return;
+    window.bsAdsConsent = true;
+    document.querySelectorAll('script[type="text/plain"][data-consent="marketing"]').forEach(old => {
+      const s = document.createElement("script");
+      s.src = old.getAttribute("src");
+      s.className = old.className;
+      old.replaceWith(s);
+    });
+    document.dispatchEvent(new Event("bs:ads-consent"));
+  }
+
   const saved = getConsent();
   if (!saved) {
     setTimeout(showBanner, 700);
+  } else if (saved.type === "accepted") {
+    enableAds();
   }
 
-  acceptBtn.addEventListener("click", () => { saveConsent("accepted"); hideBanner(); });
+  acceptBtn.addEventListener("click", () => { saveConsent("accepted"); hideBanner(); enableAds(); });
   declineBtn.addEventListener("click", () => { saveConsent("essential"); hideBanner(); });
 })();
 /* =========================
