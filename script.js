@@ -208,17 +208,19 @@ if (yearEl) {
     setTimeout(() => banner.classList.remove("is-visible"), 300);
   }
 
-  // Werbung (Adsovo) erst nach Zustimmung laden
+  // Werbung (Adsovo, AdSense) und Analytics erst nach Zustimmung laden
   function enableAds() {
     if (window.bsAdsConsent) return;
     window.bsAdsConsent = true;
     document.querySelectorAll('script[type="text/plain"][data-consent="marketing"]').forEach(old => {
       const s = document.createElement("script");
-      s.src = old.getAttribute("src");
-      s.className = old.className;
+      for (const { name, value } of old.attributes) {
+        if (name !== "type" && name !== "data-consent") s.setAttribute(name, value);
+      }
       old.replaceWith(s);
     });
     document.dispatchEvent(new Event("bs:ads-consent"));
+    document.dispatchEvent(new Event("sw:consent-accepted"));
   }
 
   const saved = getConsent();

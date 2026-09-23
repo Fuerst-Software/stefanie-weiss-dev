@@ -1,6 +1,16 @@
 (function () {
   'use strict';
 
+  // Nur mit Zustimmung ("Alle akzeptieren") tracken — gilt auch auf Unterseiten ohne Banner
+  function hasConsent() {
+    try { return (JSON.parse(localStorage.getItem('stefanie_cookie_v2')) || {}).type === 'accepted'; }
+    catch (e) { return false; }
+  }
+  if (hasConsent()) start();
+  else document.addEventListener('sw:consent-accepted', start, { once: true });
+
+  function start() {
+
   var API = 'https://analytics.fuerst-software.com';
   var SITE = 'stefanie-weiss.at';
 
@@ -96,5 +106,6 @@
       y_pct: yPct
     });
   }, { passive: true });
+  }
 
 })();
